@@ -5,6 +5,7 @@ import InputBox from '../components/InputBox'
 class App extends Component {
   constructor() {
     super();
+    this.tabIsActive = true;
     this.timer = 0;
     this.state = {
       milisecond: parseInt(0),
@@ -13,6 +14,24 @@ class App extends Component {
       hour: parseInt(0),
       goState: 'Start'
     }
+  }
+
+  componentDidMount() {
+      window.addEventListener("focus", this.onFocus);
+      window.addEventListener("blur", this.onBlur);
+  }
+
+  componentWillUnmount() {
+      window.removeEventListener("focus", this.onFocus);
+      window.removeEventListener("blur", this.onBlur);
+  }
+
+  onFocus = () => {
+    this.tabIsActive = true;
+  }
+
+  onBlur = () => {
+    this.tabIsActive = false;
   }
 
   toggleButton = () => {
@@ -27,21 +46,21 @@ class App extends Component {
   timeReconfig = () => {
     if (this.state.second >= 60){
       if (this.state.milisecond || this.state.second > 60){
-        this.setState({ minute: (this.state.minute+60+1)%60 });   
         this.setState({ second: this.state.second%60 });
+        this.setState({ minute: (this.state.minute+1)%60 });   
       }
     }
     if (this.state.minute >= 60){
       if (this.state.second || this.state.minute > 60){
         this.setState({ minute: this.state.minute%60 })
-        this.setState({ hour: this.state.hour+1 });    
+        this.setState({ hour: Math.min(999, this.state.hour+1) });    
       }
     }
   }
 
   startTimer = () => {
     this.timeReconfig();
-    this.timer = setInterval(this.countDown, 10);
+    this.timer = setInterval(this.countDown, this.tabIsActive ? 10 : 1000);
     this.setState({ goState: 'Stop' })
   }
 
@@ -71,18 +90,20 @@ class App extends Component {
     this.setState({ second: (60+this.state.second-1)%60 });
   }
 
+  updateMilisecond = () => {
+    if (this.state.milisecond === 0) {
+      this.updateSecond();
+    }
+    this.setState({ milisecond: (99+this.state.milisecond-1)%99} )
+  }
+
   countDown = () => {
     //stop timer conditions
     if (!(this.state.milisecond || this.state.second || this.state.minute || this.state.hour)){
       this.stopTimer();
       return;
     }
-
-    //update milisecond
-    if (this.state.milisecond === 0) {
-      this.updateSecond();
-    }
-    this.setState({ milisecond: (99+this.state.milisecond-1)%99} )
+    this.tabIsActive ? this.updateMilisecond() : this.updateSecond();
   }
 
   hourInputChange = (e) => {
