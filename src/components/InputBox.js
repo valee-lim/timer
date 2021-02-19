@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import './InputBox.css';
 
-const InputBox = ({ searchChange, currentTime, hourHandle, currentState }) => {
+const InputBox = ({ searchChange, currentTime, digitHandle, currentState }) => {
 	const handleInput = e => {
-		let maxLength = hourHandle ? 100 : 10;
+		let maxLength = digitHandle ? 100 : 10;
 		if ((e.target.value >= maxLength && e.key !== 'Backspace') ||
+			currentState === 'Stop' ||
 			e.key === 'e' ||
 			e.key === '-' ||
 			e.key === '+' ||
 			e.key === ' ' ||
-			e.key === '=' ||
-			(e.target.valueAsNumber === 0 && e.key === 'Backspace') ||
-			currentState === 'Stop'){
+			e.key === '='
+			){
 			e.preventDefault();
 		}
 	}
@@ -20,7 +20,7 @@ const InputBox = ({ searchChange, currentTime, hourHandle, currentState }) => {
 			<input 
 			type='number'
 			placeholder='00'
-			value={currentTime.toString().padStart(2, '0')}
+			value={currentTime.toString().padStart(digitHandle ? 3 : 2, '0')}
 			onKeyDown={handleInput}
 			onChange={searchChange}
 			onFocus={e => e.target.select()}
