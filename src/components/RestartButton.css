@@ -25,3 +25,7 @@
 	transform: scale(1.05);
 	outline: none;
 }
+
+#restartButton:active {
+	transform: scale(1.1);
+}
