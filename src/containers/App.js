@@ -128,7 +128,6 @@ class App extends Component {
   }
 
   minuteInputChange = e => {
-    console.log(e.target.valueAsNumber);
     if (isNaN(e.target.valueAsNumber))
       e.target.valueAsNumber = 0;
     this.setState({ minute: e.target.valueAsNumber, remainingTime: this.getRemainingTime() }, () => 
