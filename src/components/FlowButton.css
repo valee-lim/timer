@@ -1,14 +1,14 @@
 #flowButton{
 	width: 100px;
 	cursor: pointer;
-	background-color: black;
+	background-color: transparent;
 	color: rgba(49, 204, 176, 1);
 	border: 2px white solid;
 	border-radius: 20px;
 	padding: 7px;
 	font-size: 30px;
 	font-family: 'Comfortaa', cursive;
-	margin: 50px 0;
+	margin: 100px 0 50px 0;
 	-moz-osx-font-smoothing: grayscale;
 	backface-visibility: hidden;
 	transform: translateZ(0);
