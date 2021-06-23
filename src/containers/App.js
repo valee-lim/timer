@@ -22,31 +22,19 @@ class App extends Component {
     }
   }
 
-
-  //  Button Settings
   toggleButton = () => {
     this.state.goState ?
       this.stopTimer() : 
       this.startTimer();
   }
-  //=====================================================
 
-
-
-
-  //  Reconfigure Timer based on input
   timeReconfig = () => {
     if (this.state.second >= 60 && ( this.state.millisecond || this.state.second > 60 ))
       this.setState({ second: this.state.second % 60, minute: (this.state.minute+1) % 60 });      
     if (this.state.minute >= 60 && ( this.state.second || this.state.minute > 60 ))
       this.setState({ minute: this.state.minute % 60, hour: Math.min(999, this.state.hour+1) });
   }
-  //=====================================================
 
-
-
-
-  //  Timer flow
   startTimer = () => {
     if (this.getRemainingTime()){
       this.timeReconfig();
@@ -81,30 +69,26 @@ class App extends Component {
       goState: 0
     });
   }
-  //=====================================================
+  timerCompleted = () => {
+    clearInterval(this.timer);
+    this.setState({
+      millisecond: 0,
+      goState: 0
+    });
+  }
 
-
-
-  //  Converts input into milliseconds
   getRemainingTime = () => (this.state.hour*3600 + this.state.minute*60 + this.state.second) * 1000 + this.state.millisecond;
-  //=====================================================
 
-
-
-  //  to Millisecond
   getHour = (x) => Math.floor(x / 3600000);
   getMinute = (x) => Math.floor((x % 3600000) / 60000);
   getSecond = (x) => Math.floor((x % 60000) / 1000);
   getMillisecond = (x) => x % 1000;
-  //=====================================================
 
-
-
-
-  //  Start/Stop Countdown
   countDown = () => {
-    this.state.remainingTime <= 0 ? 
-      this.restartTimer() :
+    if (this.state.remainingTime <= 0) {
+      this.timerCompleted();
+    }
+    else {
       this.setState({
         remainingTime: this.state.remainingTime - new Date().getTime() + this.timeDif,
         hour: this.getHour(this.state.remainingTime),
@@ -112,13 +96,10 @@ class App extends Component {
         second: this.getSecond(this.state.remainingTime),
         millisecond: this.getMillisecond(this.state.remainingTime)
       })
+    }
     this.timeDif = new Date().getTime();
   }
-  //=====================================================
 
-
-
-  //  Input change
   hourInputChange = e => {
     if (isNaN(e.target.valueAsNumber))
       e.target.valueAsNumber = 0;
@@ -149,11 +130,7 @@ class App extends Component {
       this.lastInput = this.getRemainingTime()
     );
   }
-  //=====================================================
-
-
-
-
+  
   render() {
     return (
       <div className='tc'>
