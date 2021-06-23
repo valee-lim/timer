@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './InputBox.css';
 
 const InputBox = ({ searchChange, currentTime, currentState, ms }) => {
