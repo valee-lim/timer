@@ -3,7 +3,7 @@ import './RestartButton.css';
 
 const RestartButton = ({ restartTimer }) => {
 	return (
-		<button id='restartButton' onClick={restartTimer}>Restart</button>
+		<button id='restartButton' onClick={restartTimer}>End</button>
 	);
 }
 

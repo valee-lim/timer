@@ -11,19 +11,20 @@ class App extends Component {
   constructor() {
     super();
     this.timer = 0;
+    this.temp = 0;
     this.timeDif = 0;
     this.lastInput = 0;
     this.audio = new Audio(Alarm);
     this.audio.volume = 0.3;
     this.audio.playbackRate = 0.5;
     this.audio.loop = true;
+    this.remainingTime = 0;
     this.state = {
-      remainingTime: 0,
       millisecond: 0,
       second: 0,
       minute: 0,
       hour: 0,
-      goState: 0
+      goState: 0,
     }
   }
 
@@ -48,9 +49,11 @@ class App extends Component {
   startTimer = () => {
     if (this.getRemainingTime()){
       this.timeReconfig();
-      this.setState({ goState: 1, remainingTime: this.getRemainingTime() });
-      this.timeDif = new Date().getTime();
-      this.timer = setInterval(this.countDown, 10);
+      this.setState({ goState: 1 });
+      this.remainingTime = this.getRemainingTime();
+      this.lastInput = this.remainingTime;
+      this.timeDif = Date.now();
+      this.timer = setInterval(() => this.countDown(), 10);
     }
   }
 
@@ -75,8 +78,8 @@ class App extends Component {
   restartTimer = () => {
     clearInterval(this.timer);
     this.lastInput = 0;
+    this.remainingTime = 0;
     this.setState({
-      remainingTime: 0,
       millisecond: 0,
       second: 0,
       minute: 0,
@@ -101,51 +104,44 @@ class App extends Component {
   getMillisecond = (x) => x % 1000;
 
   countDown = () => {
-    if (this.state.remainingTime <= 0) {
+    this.temp = Date.now();
+    this.remainingTime = this.remainingTime - this.temp + this.timeDif;
+    this.timeDif = this.temp;
+    if (this.remainingTime <= 0) {
       this.timerCompleted();
       this.audio.play();
     }
     else {
       this.setState({
-        remainingTime: this.state.remainingTime - new Date().getTime() + this.timeDif,
-        hour: this.getHour(this.state.remainingTime),
-        minute: this.getMinute(this.state.remainingTime),
-        second: this.getSecond(this.state.remainingTime),
-        millisecond: this.getMillisecond(this.state.remainingTime)
+        hour: this.getHour(this.remainingTime),
+        minute: this.getMinute(this.remainingTime),
+        second: this.getSecond(this.remainingTime),
+        millisecond: this.getMillisecond(this.remainingTime)
       })
     }
-    this.timeDif = new Date().getTime();
   }
 
   hourInputChange = e => {
     if (isNaN(e.target.valueAsNumber))
       e.target.valueAsNumber = 0;
-    this.setState({ hour: e.target.valueAsNumber, remainingTime: this.getRemainingTime() }, () => 
-      this.lastInput = this.getRemainingTime()
-    ); 
+    this.setState({ hour: e.target.valueAsNumber }); 
   }
 
   minuteInputChange = e => {
     if (isNaN(e.target.valueAsNumber))
       e.target.valueAsNumber = 0;
-    this.setState({ minute: e.target.valueAsNumber, remainingTime: this.getRemainingTime() }, () => 
-      this.lastInput = this.getRemainingTime()
-    );
+    this.setState({ minute: e.target.valueAsNumber });
   }
 
   secondInputChange = e => {
     if (isNaN(e.target.valueAsNumber))
       e.target.valueAsNumber = 0;
-    this.setState({ second: e.target.valueAsNumber, remainingTime: this.getRemainingTime() }, () => 
-        this.lastInput = this.getRemainingTime()
-    );
+    this.setState({ second: e.target.valueAsNumber });
   }
   millisecondInputChange = e => {
     if (isNaN(e.target.valueAsNumber))
       e.target.valueAsNumber = 0;
-    this.setState({ millisecond: e.target.valueAsNumber, remainingTime: this.getRemainingTime() }, () => 
-      this.lastInput = this.getRemainingTime()
-    );
+    this.setState({ millisecond: e.target.valueAsNumber });
   }
   
   render() {
@@ -159,11 +155,11 @@ class App extends Component {
           <span>:</span>
           <InputBox searchChange={this.secondInputChange} currentTime={this.state.second} currentState={this.state.goState} />
           <span>:</span>
-          <InputBox searchChange={this.millisecondInputChange} currentTime={this.state.millisecond} currentState={this.state.goState} ms={0}/>
+          <InputBox searchChange={this.millisecondInputChange} currentTime={this.state.millisecond} currentState={this.state.goState} milli={0}/>
         </div>
         <ResetButton resetTimer={this.resetTimer} />
         <RestartButton restartTimer={this.restartTimer} />
-        <LoadingBar targetTime={this.lastInput} remainingTime={this.state.remainingTime} />
+        <LoadingBar targetTime={this.lastInput} remainingTime={this.remainingTime} />
       </div>
     );
   }

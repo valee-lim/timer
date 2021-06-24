@@ -1,9 +1,9 @@
 import React from 'react';
 import './InputBox.css';
 
-const InputBox = ({ searchChange, currentTime, currentState, ms }) => {
+const InputBox = ({ searchChange, currentTime, currentState, milli }) => {
 	const handleInput = e => {
-		let maxLen = ms === undefined ? 10 : 100;
+		let maxLen = milli === undefined ? 10 : 100;
 		if (
 			currentState === 1 ||
 			(e.target.value >= maxLen && e.key !== 'Backspace') ||
@@ -21,7 +21,7 @@ const InputBox = ({ searchChange, currentTime, currentState, ms }) => {
 			<input 
 			type='number'
 			placeholder='00'
-			value={currentTime.toString().padStart(ms === undefined ? 2 : 3, '0')}
+			value={currentTime.toString().padStart(milli === undefined ? 2 : 3, '0')}
 			onKeyDown={handleInput}
 			onChange={searchChange}
 			onFocus={e => e.target.select()}
